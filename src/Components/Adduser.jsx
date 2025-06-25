@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-const Adduser = () => {
+const Adduser = ({ data, isEditModal }) => {
   const defaultForm = {
     employe: "",
     department: "Sales",

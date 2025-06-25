@@ -1,7 +1,16 @@
 import { useState, useEffect } from "react";
 import { department, formatDate } from "./utils/Common";
 import PaymentStatus from "./Components/payment status/PaymentStatus";
-import { Select, Loader, Table, Pagination } from "@mantine/core";
+import {
+  Select,
+  Loader,
+  Table,
+  Pagination,
+  TextInput,
+  Button,
+  Modal,
+} from "@mantine/core";
+import UpdateUser from "./Components/UpdateUser";
 
 const Alldata = () => {
   const [userData, setUserData] = useState([]);
@@ -13,6 +22,9 @@ const Alldata = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [dataLimit, setDataLimit] = useState(5);
   const [totalCount, setTotalCount] = useState(0);
+  const [empName, setEmpName] = useState("");
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editData, setEditData] = useState();
 
   const getData = async () => {
     const queryParms = new URLSearchParams();
@@ -30,7 +42,10 @@ const Alldata = () => {
 
     if (dataLimit) queryParms.append("dataLimit", dataLimit);
 
+    if (empName) queryParms.append("empName", empName);
+
     setLoading(true);
+
     try {
       const responce = await fetch(
         `http://localhost:8000/api/v1/users/get-users?${queryParms.toString()}`
@@ -49,6 +64,22 @@ const Alldata = () => {
       setLoading(false);
     }
   };
+
+  const delData = async (id) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/v1/users/del-users/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      await getData();
+    } catch (error) {
+      console.log("error While Deleting Data -->", error);
+    }
+  };
+
   const rows = userData.map((element, ind) => (
     <Table.Tr key={element._id}>
       <Table.Td>{ind + 1}</Table.Td>
@@ -63,12 +94,40 @@ const Alldata = () => {
       <Table.Td>{formatDate(element.paymentDate)}</Table.Td>
       <Table.Td>{<PaymentStatus status={element.paymentStatus} />}</Table.Td>
       <Table.Td>{element.employeeStatus}</Table.Td>
+      <Table.Td>
+        <div className="flex justify-center gap-4">
+          <Button
+            variant="gradient"
+            gradient={{ from: "yellow", to: "orange", deg: 90 }}
+            radius={"8px"}
+            onClick={() => {
+              setEditData(element);
+              setIsEditModalOpen(true);
+            }}
+          >
+            Edit
+          </Button>
+          <Button
+            variant="gradient"
+            gradient={{ from: "red", to: "rgba(84, 14, 14, 1)", deg: 68 }}
+            radius={"8px"}
+            onClick={() => delData(element?._id)}
+          >
+            Delete
+          </Button>
+        </div>
+      </Table.Td>
     </Table.Tr>
   ));
 
   useEffect(() => {
-    console.log(departmentStatus);
-    getData();
+    const timer = setTimeout(() => {
+      getData();
+    }, 300);
+
+    return () => {
+      clearTimeout(timer);
+    };
   }, [
     departmentStatus,
     paymentStatus,
@@ -76,13 +135,29 @@ const Alldata = () => {
     sortOrder,
     currentPage,
     dataLimit,
+    empName,
   ]);
-
-  console.log(dataLimit);
 
   return (
     <>
+      <Modal
+        size="70%"
+        opened={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false);
+        }}
+        title="Update User"
+      >
+        <UpdateUser userData={editData} setIsEditModalOpen={setIsEditModalOpen} getData={getData}/>
+      </Modal>
+
       <div className="flex flex-wrap gap-4 mx-5">
+        <TextInput
+          className="min-w-[200px] flex-1"
+          label="Search Employe"
+          placeholder="Enter Employe Name"
+          onChange={(e) => setEmpName(e.currentTarget.value)}
+        />
         <Select
           className="min-w-[200px] flex-1"
           label="Department"
@@ -106,7 +181,7 @@ const Alldata = () => {
         />
       </div>
 
-      <div className="overflow-x-auto mx-5 mt-5 max-h-[400px]">
+      <div className="overflow-x-auto mx-5 mt-5 max-h-[350px]">
         <Table striped highlightOnHover withTableBorder withColumnBorders>
           <Table.Thead>
             <Table.Tr>
@@ -126,6 +201,7 @@ const Alldata = () => {
               <Table.Th>Payment Date</Table.Th>
               <Table.Th>Payment Status</Table.Th>
               <Table.Th>Employe Status</Table.Th>
+              <Table.Th>Action</Table.Th>
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>
