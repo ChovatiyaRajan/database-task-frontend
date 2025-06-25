@@ -12,6 +12,7 @@ const Alldata = () => {
   const [sortOrder, setSortOrder] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
   const [dataLimit, setDataLimit] = useState(5);
+  const [totalCount,setTotalCount] = useState(0)
 
   const getData = async () => {
     const queryParms = new URLSearchParams();
@@ -41,6 +42,7 @@ const Alldata = () => {
         return;
       }
       setUserData(data.allData);
+      setTotalCount(data.count || 0)
     } catch (error) {
       console.log("error while getting Data", error);
     } finally {
@@ -141,7 +143,7 @@ const Alldata = () => {
         </Table>{" "}
       </div>
       <div className="flex justify-between my-10 px-5 items-center ">
-        <Pagination total={10} onChange={(e) => setCurrentPage(e)} />
+        <Pagination total={Math.ceil(totalCount / dataLimit)} onChange={(e) => setCurrentPage(e)} />
         <div className="flex gap-3.5 items-center">
           <label htmlFor="">Show Users</label>
           <Select
