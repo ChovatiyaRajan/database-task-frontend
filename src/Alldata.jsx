@@ -12,7 +12,7 @@ const Alldata = () => {
   const [sortOrder, setSortOrder] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
   const [dataLimit, setDataLimit] = useState(5);
-  const [totalCount,setTotalCount] = useState(0)
+  const [totalCount, setTotalCount] = useState(0);
 
   const getData = async () => {
     const queryParms = new URLSearchParams();
@@ -42,14 +42,14 @@ const Alldata = () => {
         return;
       }
       setUserData(data.allData);
-      setTotalCount(data.count || 0)
+      setTotalCount(data.count || 0);
     } catch (error) {
       console.log("error while getting Data", error);
     } finally {
       setLoading(false);
     }
   };
-  const rows = userData.map((element,ind) => (
+  const rows = userData.map((element, ind) => (
     <Table.Tr key={element._id}>
       <Table.Td>{ind + 1}</Table.Td>
       <Table.Td>{element.employe}</Table.Td>
@@ -82,31 +82,32 @@ const Alldata = () => {
 
   return (
     <>
-      <div className="flex mx-5 gap-4">
+      <div className="flex flex-wrap gap-4 mx-5">
         <Select
-          className="w-50"
+          className="min-w-[200px] flex-1"
           label="Department"
           placeholder="Select Department"
           data={["Sales", "Support", "Design"]}
           onChange={(val) => setDepartmentStatus(val)}
         />
         <Select
-          className="w-50"
+          className="min-w-[200px] flex-1"
           label="Payment Status"
           placeholder="Select Payment Status"
           data={["PENDING", "DONE", "FAILED"]}
           onChange={(val) => setPaymentStatus(val)}
         />
         <Select
-          className="w-50"
+          className="min-w-[200px] flex-1"
           label="Employe Status"
           placeholder="Select Employe Status"
           data={["Full-time", "Part-Time", "Contractor"]}
           onChange={(val) => setEmpStatus(val)}
         />
       </div>
-      <div style={{ maxHeight: "400px", overflowY: "auto" }} className="mx-5">
-        <Table className="mt-5" striped highlightOnHover withBorder>
+
+      <div className="overflow-x-auto mx-5 mt-5 max-h-[400px]">
+        <Table striped highlightOnHover withTableBorder withColumnBorders>
           <Table.Thead>
             <Table.Tr>
               <Table.Th>#</Table.Th>
@@ -130,7 +131,7 @@ const Alldata = () => {
           <Table.Tbody>
             {loading ? (
               <Table.Tr>
-                <Table.Td colSpan={6}>
+                <Table.Td colSpan={7}>
                   <div className="flex justify-center h-50 items-center">
                     <Loader color="rgba(0, 0, 0, 1)" size="lg" type="bars" />
                   </div>
@@ -140,33 +141,37 @@ const Alldata = () => {
               rows
             )}
           </Table.Tbody>
-        </Table>{" "}
+        </Table>
       </div>
-      <div className="flex justify-between my-10 px-5 items-center ">
-        <Pagination total={Math.ceil(totalCount / dataLimit)} onChange={(e) => setCurrentPage(e)} />
-        <div className="flex gap-3.5 items-center">
-          <label htmlFor="">Show Users</label>
-          <Select
-          className="w-20"
-          placeholder="Pick value"
-          data={[
-            { value: "5", label: "5" },
-            { value: "10", label: "10" },
-            { value: "15", label: "15" },
-            { value: "20", label: "20" },
-            { value: "25", label: "25" },
-            { value: "30", label: "30" },
-            { value: "35", label: "35" },
-            { value: "40", label: "40" },
-            { value: "45", label: "45" },
-            { value: "50", label: "50" },
-          ]}
-          withScrollArea={false}
-          styles={{ dropdown: { maxHeight: 200, overflowY: "auto" } }}
-          onChange={(e) => setDataLimit(e)}
-          defaultValue="5"
-          allowDeselect={false}
+
+      <div className="flex flex-wrap justify-between items-center px-5 my-10 gap-4">
+        <Pagination
+          total={Math.ceil(totalCount / dataLimit)}
+          onChange={(e) => setCurrentPage(e)}
         />
+        <div className="flex items-center gap-3">
+          <label>Show Users</label>
+          <Select
+            className="w-20"
+            placeholder="Pick value"
+            data={[
+              { value: "5", label: "5" },
+              { value: "10", label: "10" },
+              { value: "15", label: "15" },
+              { value: "20", label: "20" },
+              { value: "25", label: "25" },
+              { value: "30", label: "30" },
+              { value: "35", label: "35" },
+              { value: "40", label: "40" },
+              { value: "45", label: "45" },
+              { value: "50", label: "50" },
+            ]}
+            withScrollArea={false}
+            styles={{ dropdown: { maxHeight: 200, overflowY: "auto" } }}
+            onChange={(e) => setDataLimit(e)}
+            defaultValue="5"
+            allowDeselect={false}
+          />
         </div>
       </div>
     </>
