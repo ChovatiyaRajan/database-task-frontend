@@ -11,6 +11,7 @@ const Alldata = () => {
   const [loading, setLoading] = useState(false);
   const [sortOrder, setSortOrder] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
+  const [dataLimit, setDataLimit] = useState(5);
 
   const getData = async () => {
     const queryParms = new URLSearchParams();
@@ -25,6 +26,8 @@ const Alldata = () => {
     if (sortOrder) queryParms.append("sortOrder", sortOrder);
 
     if (currentPage) queryParms.append("currentPage", currentPage);
+
+    if (dataLimit) queryParms.append("dataLimit", dataLimit);
 
     setLoading(true);
     try {
@@ -44,8 +47,9 @@ const Alldata = () => {
       setLoading(false);
     }
   };
-  const rows = userData.map((element) => (
+  const rows = userData.map((element,ind) => (
     <Table.Tr key={element._id}>
+      <Table.Td>{ind + 1}</Table.Td>
       <Table.Td>{element.employe}</Table.Td>
       <Table.Td>
         <div className="flex items-center gap-3">
@@ -63,7 +67,16 @@ const Alldata = () => {
   useEffect(() => {
     console.log(departmentStatus);
     getData();
-  }, [departmentStatus, paymentStatus, empStatus, sortOrder, currentPage]);
+  }, [
+    departmentStatus,
+    paymentStatus,
+    empStatus,
+    sortOrder,
+    currentPage,
+    dataLimit,
+  ]);
+
+  console.log(dataLimit);
 
   return (
     <>
@@ -90,10 +103,11 @@ const Alldata = () => {
           onChange={(val) => setEmpStatus(val)}
         />
       </div>
-      <div className="mx-5">
-        <Table className="mt-5">
+      <div style={{ maxHeight: "400px", overflowY: "auto" }} className="mx-5">
+        <Table className="mt-5" striped highlightOnHover withBorder>
           <Table.Thead>
             <Table.Tr>
+              <Table.Th>#</Table.Th>
               <Table.Th>Employe Name</Table.Th>
               <Table.Th>Department</Table.Th>
               <Table.Th>
@@ -126,10 +140,12 @@ const Alldata = () => {
           </Table.Tbody>
         </Table>{" "}
       </div>
-      <div className="flex justify-left my-10 px-5">
-        <Select
-          label="Select Limit"
-          className="w-50"
+      <div className="flex justify-between my-10 px-5 items-center ">
+        <Pagination total={10} onChange={(e) => setCurrentPage(e)} />
+        <div className="flex gap-3.5 items-center">
+          <label htmlFor="">Show Users</label>
+          <Select
+          className="w-20"
           placeholder="Pick value"
           data={[
             { value: "5", label: "5" },
@@ -145,11 +161,11 @@ const Alldata = () => {
           ]}
           withScrollArea={false}
           styles={{ dropdown: { maxHeight: 200, overflowY: "auto" } }}
-          onChange={(e) => console.log(e)}
+          onChange={(e) => setDataLimit(e)}
+          defaultValue="5"
+          allowDeselect={false}
         />
-      </div>
-      <div className="flex justify-center my-10">
-        <Pagination total={10} onChange={(e) => setCurrentPage(e)} />
+        </div>
       </div>
     </>
   );
