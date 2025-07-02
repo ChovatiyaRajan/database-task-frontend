@@ -1,7 +1,7 @@
-const statusColor = {
-  PENDING: "#f0ad4e", // Orange/Amber
-  DONE: "#28a745",    // Green
-  FAILED: "#dc3545",  // Red
+const colorCode = {
+  DONE: "#28a745",      // green
+  PENDING: "#ffc107",   // yellow
+  FAILED: "#dc3545",    // red
 };
 
 const PaymentStatus = ({status}) => {

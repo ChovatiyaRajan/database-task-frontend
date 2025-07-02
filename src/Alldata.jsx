@@ -56,7 +56,7 @@ const Alldata = () => {
         console.log("Data Not Found !", data.message);
         return;
       }
-      setUserData(data.allData);
+      // setUserData(data.allData);
       setTotalCount(data.count || 0);
     } catch (error) {
       console.log("error while getting Data", error);
@@ -148,7 +148,11 @@ const Alldata = () => {
         }}
         title="Update User"
       >
-        <UpdateUser userData={editData} setIsEditModalOpen={setIsEditModalOpen} getData={getData}/>
+        <UpdateUser
+          userData={editData}
+          setIsEditModalOpen={setIsEditModalOpen}
+          getData={getData}
+        />
       </Modal>
 
       <div className="flex flex-wrap gap-4 mx-5">
